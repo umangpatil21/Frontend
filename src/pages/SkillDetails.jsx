@@ -33,7 +33,7 @@ const SkillDetails = () => {
     };
 
     const user = JSON.parse(localStorage.getItem('user'));
-    const isTeacher = user && skill && skill.teacher._id === user.id;
+    const isTeacher = user && skill && skill.teacher && (skill.teacher._id === user.id);
 
     useEffect(() => {
         const fetchSkillAndBooking = async () => {
@@ -206,10 +206,10 @@ const SkillDetails = () => {
                         </ul>
 
                         <div className="flex items-center space-x-4 border-t pt-6 mb-8">
-                            <img src={skill.teacher.profilePhoto} alt={skill.teacher.name} className="w-14 h-14 rounded-full" />
+                            <img src={skill.teacher?.profilePhoto || "https://i.pravatar.cc/150"} alt={skill.teacher?.name || "Teacher"} className="w-14 h-14 rounded-full" />
                             <div>
-                                <h4 className="font-bold text-gray-900">{skill.teacher.name}</h4>
-                                <p className="text-gray-500 text-sm">{skill.teacher.bio}</p>
+                                <h4 className="font-bold text-gray-900">{skill.teacher?.name || "Unknown Teacher"}</h4>
+                                <p className="text-gray-500 text-sm">{skill.teacher?.bio || "No bio available."}</p>
                             </div>
                         </div>
 
@@ -572,7 +572,7 @@ const SkillDetails = () => {
                                 className="w-full py-4 bg-blue-600 text-white rounded-2xl font-bold hover:bg-blue-700 transition-all flex items-center justify-center gap-2"
                             >
                                 <MessageSquare size={20} />
-                                Chat with {skill.teacher.name}
+                                Chat with {skill.teacher?.name || "Teacher"}
                             </button>
                             <button
                                 onClick={() => navigate('/dashboard')}
@@ -627,7 +627,7 @@ const SkillDetails = () => {
 
                         <div className="absolute bottom-10 left-10 right-10 flex flex-col items-center text-center">
                             <h2 className="text-white text-2xl font-bold mb-2">{selectedVideo.title}</h2>
-                            <p className="text-white/50 font-medium">Lesson by {skill.teacher.name} • {selectedVideo.duration || "Self-paced"}</p>
+                            <p className="text-white/50 font-medium">Lesson by {skill.teacher?.name || "Teacher"} • {selectedVideo.duration || "Self-paced"}</p>
                         </div>
                     </motion.div>
                 )}
