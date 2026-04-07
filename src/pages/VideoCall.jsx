@@ -6,6 +6,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import Whiteboard from '../components/Whiteboard';
 import { useMedia } from '../context/MediaContext';
 import api, { API_BASE_URL } from '../api';
+import io from 'socket.io-client';
 
 const socket = io.connect(API_BASE_URL);
 
