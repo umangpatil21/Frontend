@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Calendar, Clock, Award, Star, MessageSquare, CheckCircle, X, FileText, Link as LinkIcon, Download, Upload, Play, Edit2, Trash2, Video } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { isSessionRealTime } from '../utils/dateUtils';
 import api from '../api';
 

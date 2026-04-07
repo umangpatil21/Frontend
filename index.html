@@ -13,13 +13,11 @@
   <script>
     window.global = window;
     window.process = {
-      env: { NODE_ENV: 'development', DEBUG: undefined },
+      env: { NODE_ENV: 'production' },
       version: '',
       nextTick: (fn) => setTimeout(fn, 0)
     };
-    var exports = {};
   </script>
-
   <script src="https://unpkg.com/simple-peer@9.11.1/simplepeer.min.js"></script>
   <script type="module" src="/src/main.jsx"></script>
 </body>
