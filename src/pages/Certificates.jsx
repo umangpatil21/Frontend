@@ -29,6 +29,10 @@ const Certificates = () => {
         link.click();
     };
 
+    const previewCertificate = (pdfUrl) => {
+        window.open(`${API_BASE_URL}${pdfUrl}`, '_blank');
+    };
+
     const handleUpdate = async (skillId) => {
         if (!skillId) return alert("Skill ID not found. Please refresh page.");
         try {
@@ -40,7 +44,7 @@ const Certificates = () => {
             fetchCertificates(); // Refresh the list
         } catch (err) {
             console.error('Error updating certificate:', err);
-            alert("Failed to update design. Please try again.");
+            alert("Failed to update design. Please close any open PDF viewers and try again.");
         }
     };
 
@@ -84,6 +88,7 @@ const Certificates = () => {
                                 certificate={cert}
                                 index={index}
                                 onDownload={downloadCertificate}
+                                onPreview={previewCertificate}
                                 onUpdate={handleUpdate}
                             />
                         ))}
@@ -113,7 +118,7 @@ const Certificates = () => {
     );
 };
 
-const CertificateCard = ({ certificate, index, onDownload }) => {
+const CertificateCard = ({ certificate, index, onDownload, onPreview, onUpdate }) => {
     return (
         <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -158,13 +163,22 @@ const CertificateCard = ({ certificate, index, onDownload }) => {
 
                 {/* Action Buttons */}
                 <div className="flex flex-col gap-2">
-                    <button
-                        onClick={() => onDownload(certificate.pdfUrl, certificate.skill?.title)}
-                        className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-blue-600 to-violet-600 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-blue-500/50 transition-all group-hover:scale-[1.02]"
-                    >
-                        <Download size={18} />
-                        Download Certificate
-                    </button>
+                    <div className="flex gap-2">
+                        <button
+                            onClick={() => onDownload(certificate.pdfUrl, certificate.skill?.title)}
+                            className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-blue-600 to-violet-600 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-blue-500/50 transition-all group-hover:scale-[1.02]"
+                        >
+                            <Download size={18} />
+                            Download
+                        </button>
+                        <button
+                            onClick={() => onPreview(certificate.pdfUrl)}
+                            className="px-4 py-3 bg-white text-gray-700 border border-gray-200 rounded-xl font-semibold hover:bg-gray-50 transition-all"
+                            title="Preview PDF"
+                        >
+                            <ExternalLink size={18} />
+                        </button>
+                    </div>
 
                     <button
                         onClick={() => onUpdate(certificate.skill?._id)}

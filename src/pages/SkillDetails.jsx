@@ -22,6 +22,25 @@ const SkillDetails = () => {
     const [showEditLessonForm, setShowEditLessonForm] = useState(false);
     const [editingLesson, setEditingLesson] = useState(null);
     const [selectedVideo, setSelectedVideo] = useState(null);
+    const [isClaiming, setIsClaiming] = useState(false);
+
+    const handleClaimCertificate = async () => {
+        setIsClaiming(true);
+        try {
+            // This triggers the backend to create the PDF if it doesn't exist
+            await api.post('/api/certificate/generate', {
+                skillId: id,
+                forceRegenerate: false 
+            });
+            // Once generated, take them to the list to see/download it
+            navigate('/certificates');
+        } catch (err) {
+            console.error("Failed to claim certificate", err);
+            alert("Failed to generate certificate. Please ensure you attended the session and try again.");
+        } finally {
+            setIsClaiming(false);
+        }
+    };
 
     const getYoutubeEmbedUrl = (url) => {
         if (!url) return null;
@@ -414,16 +433,24 @@ const SkillDetails = () => {
                                 })()}
 
                                 {isBooked && booking && booking.status === 'completed' && (
-                                    <Link
-                                        to="/certificates"
-                                        className={`w-full font-bold py-4 rounded-2xl transition-all shadow-xl flex items-center justify-center gap-2 mb-3 ${booking.attended
-                                            ? 'bg-yellow-500 text-white hover:bg-yellow-600 shadow-yellow-100 active:scale-95'
-                                            : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                    <button
+                                        onClick={handleClaimCertificate}
+                                        disabled={isClaiming || !booking.attended}
+                                        className={`w-full font-bold py-4 rounded-2xl transition-all shadow-xl flex items-center justify-center gap-2 mb-3 ${isClaiming || !booking.attended
+                                            ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                            : 'bg-yellow-500 text-white hover:bg-yellow-600 shadow-yellow-100 active:scale-95'
                                             }`}
                                     >
-                                        <Award size={20} /> Claim Certificate
-                                        {!booking.attended && <span className="text-[8px] block ml-1">(Requires Attendance)</span>}
-                                    </Link>
+                                        {isClaiming ? (
+                                            <div className="flex items-center gap-2">
+                                                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                                Generating...
+                                            </div>
+                                        ) : (
+                                            <><Award size={20} /> Claim Certificate</>
+                                        )}
+                                        {!booking.attended && !isClaiming && <span className="text-[8px] block ml-1">(Requires Attendance)</span>}
+                                    </button>
                                 )}
 
                                 <p className="text-center text-[10px] text-gray-400 mt-4 leading-tight uppercase font-bold tracking-widest">
