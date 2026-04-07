@@ -78,9 +78,15 @@ const VideoCall = () => {
         let source;
         let animationFrame;
 
-        const startAnalysis = () => {
+        const startAnalysis = async () => {
             try {
                 audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                
+                // Mobile Browsers require resume() on user gesture
+                if (audioContext.state === 'suspended') {
+                    await audioContext.resume();
+                }
+
                 analyser = audioContext.createAnalyser();
                 source = audioContext.createMediaStreamSource(stream);
                 source.connect(analyser);
@@ -112,7 +118,7 @@ const VideoCall = () => {
             if (animationFrame) cancelAnimationFrame(animationFrame);
             if (audioContext) audioContext.close();
         };
-    }, [stream, isMicOn]);
+    }, [stream, isMicOn, isJoined]); // Added isJoined to re-trigger on mobile gesture
 
     // Robust cleanup on unmount
     useEffect(() => {
@@ -241,7 +247,18 @@ const VideoCall = () => {
             if (!PeerConstructor) {
                 throw new Error("SimplePeer library not loaded. Please refresh the page.");
             }
-            const peer = new PeerConstructor({ initiator: true, trickle: false, stream: stream });
+            const peer = new PeerConstructor({ 
+                initiator: true, 
+                trickle: false, 
+                stream: stream,
+                config: {
+                    iceServers: [
+                        { urls: 'stun:stun.l.google.com:19302' },
+                        { urls: 'stun:stun1.l.google.com:19302' },
+                        { urls: 'stun:stun2.l.google.com:19302' },
+                    ]
+                }
+            });
 
             peer.on("signal", (data) => {
                 console.log("DEBUG: Signal generated, emitting callUser");
@@ -292,7 +309,18 @@ const VideoCall = () => {
             if (!PeerConstructor) {
                 throw new Error("SimplePeer library not loaded. Please refresh the page.");
             }
-            const peer = new PeerConstructor({ initiator: false, trickle: false, stream: stream });
+            const peer = new PeerConstructor({ 
+                initiator: false, 
+                trickle: false, 
+                stream: stream,
+                config: {
+                    iceServers: [
+                        { urls: 'stun:stun.l.google.com:19302' },
+                        { urls: 'stun:stun1.l.google.com:19302' },
+                        { urls: 'stun:stun2.l.google.com:19302' },
+                    ]
+                }
+            });
 
             peer.on("signal", (data) => {
                 console.log("DEBUG: Answer signal generated, emitting answerCall");

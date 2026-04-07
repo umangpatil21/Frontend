@@ -44,14 +44,22 @@ export const MediaProvider = ({ children }) => {
 
     const enableDevices = async () => {
         try {
-            const initialStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+            const constraints = {
+                video: {
+                    width: { ideal: 640 },
+                    height: { ideal: 480 },
+                    facingMode: "user"
+                },
+                audio: true
+            };
+            const initialStream = await navigator.mediaDevices.getUserMedia(constraints);
             setStream(initialStream);
             streamRef.current = initialStream;
             setIsCamOn(true);
             setIsMicOn(true);
         } catch (err) {
             console.error("Failed to enable devices", err);
-            alert("Camera and Mic permissions are required.");
+            alert("Camera and Mic permissions are required. Please ensure you are on HTTPS and have allowed access.");
         }
     };
 
