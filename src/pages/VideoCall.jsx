@@ -533,7 +533,12 @@ const VideoCall = () => {
                                     >
                                         <Video size={20} /> Enable Camera & Mic
                                     </button>
-                                    <p className="text-neutral-600 text-[10px] mt-4 uppercase tracking-[0.2em] font-bold">Hardware is currently disabled for your privacy</p>
+                                    <div className="mt-8 text-center max-w-sm">
+                                        <p className="text-neutral-600 text-[10px] uppercase tracking-[0.2em] font-bold mb-2">Hardware currently disabled</p>
+                                        <p className="text-neutral-500 text-[11px] leading-relaxed">
+                                            <b>Troubleshooting PC/Mobile:</b> Ensure you are on HTTPS, no other apps are using your camera (Zoom/Teams), and permissions are granted in your browser settings.
+                                        </p>
+                                    </div>
                                 </div>
                             )}
 
